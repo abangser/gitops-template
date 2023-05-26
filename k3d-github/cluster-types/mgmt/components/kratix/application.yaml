@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kratix
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/syntasso/kratix.git"
+    path: charts/kratix
+    targetRevision: HEAD
+    helm:
+      values: |
+        clusters:
+        - name: worker-cluster-1
+          namespace: default
+          labels:
+            env: dev
+          path: "dev"
+          stateStoreRef:
+            name: default
+            kind: BucketStateStore
+        stateStores:
+        - kind: BucketStateStore
+          name: default
+          namespace: default
+          secretRef:
+            name: bss-default-default
+          endpoint: minio.minio.svc.cluster.local:9000
+          insecure: true
+          bucket: kratix
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: kratix
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

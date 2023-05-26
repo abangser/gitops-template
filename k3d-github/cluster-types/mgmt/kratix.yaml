@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kratix-components
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1000"
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:abangser/gitops.git
+    path: registry/kubefirst/components/kratix
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kratix
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
