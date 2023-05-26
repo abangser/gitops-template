@@ -63,6 +63,11 @@ spec:
           purge: true
           versioning: false
           objectlocking: false
+        - name: kratix
+          policy: none
+          purge: true
+          versioning: false
+          objectlocking: false
         - name: kubefirst-state-store
           policy: none
           purge: true
