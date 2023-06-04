@@ -13,27 +13,6 @@ resource "vault_generic_secret" "atlantis_ngrok_secrets" {
   depends_on = [vault_mount.secret]
 }
 
-resource "random_password" "chartmuseum_password" {
-  length           = 22
-  special          = true
-  override_special = "!#$"
-}
-
-resource "vault_generic_secret" "chartmuseum_secrets" {
-  path = "secret/chartmuseum"
-
-  data_json = jsonencode(
-    {
-      AWS_ACCESS_KEY_ID     = var.aws_access_key_id,
-      AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key,
-      BASIC_AUTH_USER       = "kbot",
-      BASIC_AUTH_PASS       = random_password.chartmuseum_password.result,
-    }
-  )
-
-  depends_on = [vault_mount.secret]
-}
-
 resource "vault_generic_secret" "docker_config" {
   path = "secret/dockerconfigjson"
 
@@ -79,48 +58,6 @@ resource "vault_generic_secret" "external_secrets_token" {
       token = var.vault_token
     }
   )
-
-  depends_on = [vault_mount.secret]
-}
-
-resource "vault_generic_secret" "development_metaphor" {
-  path = "secret/development/metaphor"
-  # note: these secrets are not actually sensitive.
-  # do not hardcode passwords in git under normal circumstances.
-  data_json = <<EOT
-{
-  "SECRET_ONE" : "development secret 1",
-  "SECRET_TWO" : "development secret 2"
-}
-EOT
-
-  depends_on = [vault_mount.secret]
-}
-
-resource "vault_generic_secret" "staging_metaphor" {
-  path = "secret/staging/metaphor"
-  # note: these secrets are not actually sensitive.
-  # do not hardcode passwords in git under normal circumstances.
-  data_json = <<EOT
-{
-  "SECRET_ONE" : "staging secret 1",
-  "SECRET_TWO" : "staging secret 2"
-}
-EOT
-
-  depends_on = [vault_mount.secret]
-}
-
-resource "vault_generic_secret" "production_metaphor" {
-  path = "secret/production/metaphor"
-  # note: these secrets are not actually sensitive.
-  # do not hardcode passwords in git under normal circumstances.
-  data_json = <<EOT
-{
-  "SECRET_ONE" : "production secret 1",
-  "SECRET_TWO" : "production secret 2"
-}
-EOT
 
   depends_on = [vault_mount.secret]
 }
